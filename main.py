@@ -2,6 +2,7 @@ import datetime as dt
 import calendar
 import pandas as pd
 import functions as mh
+
 MONTHS = [calendar.month_name[i] for i in range(1, 13)]
 
 
@@ -38,7 +39,8 @@ for i in calendar.index:
         calendar.at[i, 'Workday'] = True
 
 # set work-free days on holidays
-holidays = [f"{year}-01-01", f"{year}-01-06", f"{year}-05-01", f"{year}-05-03", f"{year}-08-15", f"{year}-11-1", f"{year}-11-11", f"{year}-12-25", f"{year}-12-26"]
+holidays = [f"{year}-01-01", f"{year}-01-06", f"{year}-05-01", f"{year}-05-03", f"{year}-08-15",
+            f"{year}-11-1", f"{year}-11-11", f"{year}-12-25", f"{year}-12-26"]
 holidays_dt = [pd.to_datetime(w, yearfirst=True) for w in holidays]
 # add movable holidays i.e. easter
 holidays_dt.extend(mh.calculate_easter(int(year)))
@@ -46,6 +48,6 @@ holidays_dt.extend(mh.calculate_easter(int(year)))
 
 for date in holidays_dt:
     if date in calendar['Date'].values:
-        # grabbing index returns index datatype, getting it's value returns a list, need to get first item of it.
+        # grabbing index returns index datatype, getting its value returns a list, need to get first item of it.
         a = calendar.index[calendar['Date'] == date].values[0]
         calendar.at[a, 'Workday'] = False

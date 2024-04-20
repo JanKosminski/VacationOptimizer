@@ -117,7 +117,8 @@ def check_total_day_count(entry_data: list[int], consecutive_sublist, whole_list
             efficiency2 = dist2next / sum_w_next
         else:
             efficiency2 = None
-        print(f"Sum with previous: {sum_w_prev}, % used workdays {efficiency1}, sum with next: {sum_w_next}, % used workdays {efficiency2}")
+        print(f"Sum with previous: {sum_w_prev}, % used workdays {efficiency1}, "
+              f"sum with next: {sum_w_next}, % used workdays {efficiency2}")
     else:
         print(f"Sum with previous: {sum_w_prev}")
 
