@@ -132,6 +132,6 @@ org_indexes = consec_val_list_split(whole_index_list)
 org_indexes.sort(key=len, reverse=True)
 
 print(org_indexes)
-for sub in org_indexes:
-    distances = check_dist(sub, whole_index_list)
-    amount = check_total_day_count(distances, sub, org_indexes)
+# for sub in org_indexes:
+#    distances = check_dist(sub, whole_index_list)
+#    amount = check_total_day_count(distances, sub, org_indexes)

@@ -1,19 +1,18 @@
-import pandas as pd
-
-
 class Vacation:
 
-    def __init__(self, nums):
-        self.dist2prev = int()
-        self.dist2next = int()
-        self.next_ind = int()
-        self.prev_ind = int()
+    def __init__(self, nums, whole_list):
+        self.dist2prev = None
+        self.dist2next = None
+        self.next_ind = None
+        self.prev_ind = None
         self.days = len(nums)
         self.indexes = nums
+        self.check_dist(whole_list)
+        self.efficiency1 = int()
+        self.efficiency2 = int()
 
 
     def check_dist(self, whole_list: list[int]):
-        result = []
         firs_ind = (whole_list.index(self.indexes[0]))
         try:
             if len(self.indexes) > 1:

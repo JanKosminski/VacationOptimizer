@@ -34,9 +34,9 @@ calendar = create_date_table(start=f"{today.year}-{today.month}-{today.day}", en
 # set free days on weekends
 for i in calendar.index:
     if calendar['Day'][i] == "Sunday" or calendar['Day'][i] == 'Saturday':
-        calendar.at[i, 'Workday'] = False
+        calendar.at[i, 'Workday'] = 1
     else:
-        calendar.at[i, 'Workday'] = True
+        calendar.at[i, 'Workday'] = 0
 
 # set work-free days on holidays
 holidays = [f"{year}-01-01", f"{year}-01-06", f"{year}-05-01", f"{year}-05-03", f"{year}-08-15",
@@ -50,4 +50,4 @@ for date in holidays_dt:
     if date in calendar['Date'].values:
         # grabbing index returns index datatype, getting its value returns a list, need to get first item of it.
         a = calendar.index[calendar['Date'] == date].values[0]
-        calendar.at[a, 'Workday'] = False
+        calendar.at[a, 'Workday'] = 0
