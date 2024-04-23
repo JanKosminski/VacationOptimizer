@@ -17,7 +17,7 @@ for it in org_indexes:
 
 
 
-def efficiency(object_list_, index_list_2d):
+def efficiency(object_list, index_list_2d):
     for j in object_list:
         if j.prev_ind is not None:
             sum_w_prev = len(j.indexes) + len(is_in_sublist(j.prev_ind, index_list_2d)) + j.dist2prev
