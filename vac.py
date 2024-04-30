@@ -1,3 +1,6 @@
+from functions import is_in_sublist, consec_val_list_split
+
+
 class Vacation:
 
     def __init__(self, nums, whole_list):
@@ -8,9 +11,9 @@ class Vacation:
         self.days = len(nums)
         self.indexes = nums
         self.check_dist(whole_list)
-        self.efficiency1 = int()
-        self.efficiency2 = int()
-
+        self.efficiency1 = None
+        self.efficiency2 = None
+        self.check_total_day_count(consec_val_list_split(whole_list))
 
     def check_dist(self, whole_list: list[int]):
         firs_ind = (whole_list.index(self.indexes[0]))
@@ -36,3 +39,11 @@ class Vacation:
             self.prev_ind = whole_list[firs_ind]
             self.dist2next = t2next
             self.next_ind = whole_list[last_ind]
+
+    def check_total_day_count(self, consecutive_indexes_list):
+        sum_w_prev = self.days + len(is_in_sublist(self.prev_ind, consecutive_indexes_list)) + self.dist2prev
+        if self.prev_ind is not None:
+            self.efficiency1 = self.dist2prev / sum_w_prev
+        if self.next_ind is not None:
+            sum_w_next = self.days + len(is_in_sublist(self.next_ind, consecutive_indexes_list)) + self.dist2next
+            self.efficiency2 = self.dist2next / sum_w_next

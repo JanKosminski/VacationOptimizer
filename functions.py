@@ -66,72 +66,8 @@ def indexes_of_val(lst: list[int]) -> list[int]:
     return list_of_indexes
 
 
-# checks distance of indexes for selected sublist of whole list
-
-def check_dist(consecutive_sublist: list, whole_list: list) -> list[int]:
-    dist2prev = None
-    result = []
-    first_ind = whole_list.index(consecutive_sublist[0])
-    try:
-        if len(consecutive_sublist) > 1:
-            last_ind = whole_list.index(consecutive_sublist[-1])
-            # calculate distance to next and previous one in whole list
-            dist2prev = abs(whole_list[abs(first_ind-1) % len(whole_list)] - consecutive_sublist[0]) - 1
-            dist2next = abs(consecutive_sublist[-1] - whole_list[last_ind + 1]) - 1
-        else:
-            # dumb but it will crash without that assignment
-            last_ind = first_ind
-            dist2prev = abs(whole_list[first_ind - 1] - consecutive_sublist[0]) - 1
-            dist2next = abs(consecutive_sublist[0] - whole_list[first_ind + 1]) - 1
-    # catches error when there is no next thing on list
-    except IndexError:
-        # returns index of nearest previous free day and distance
-        result = [dist2prev, whole_list[first_ind]]
-    else:
-        # returns index of previous free day and distance then distance to next and index of next free day
-        result = [dist2prev, whole_list[first_ind], dist2next, whole_list[last_ind]]
-    finally:
-        print(result)
-        return result
-
-
 def is_in_sublist(char: int, checked_list: list[list[int]]) -> list:
+    # returns first sublist the variable is in
     for i, sublist in enumerate(checked_list):
         if char in sublist:
             return sublist
-
-
-def check_total_day_count(entry_data: list[int], consecutive_sublist, whole_list):
-    dist2prev = entry_data[0]
-    sublist1 = entry_data[1]
-    sum_w_prev = len(consecutive_sublist) + len(is_in_sublist(sublist1, whole_list)) + dist2prev
-    if dist2prev != 0:
-        efficiency1 = dist2prev / sum_w_prev
-    else:
-        efficiency1 = None
-    if len(entry_data) == 4:
-        dist2next = entry_data[2]
-        sublist2 = entry_data[3]
-        sum_w_next = len(consecutive_sublist) + len(is_in_sublist(sublist2, whole_list)) + dist2next
-        if dist2next != 0:
-            efficiency2 = dist2next / sum_w_next
-        else:
-            efficiency2 = None
-        print(f"Sum with previous: {sum_w_prev}, % used workdays {efficiency1}, "
-              f"sum with next: {sum_w_next}, % used workdays {efficiency2}")
-    else:
-        print(f"Sum with previous: {sum_w_prev}")
-
-
-lsit = [1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0]
-
-whole_index_list = indexes_of_val(lsit)
-print(whole_index_list)
-
-org_indexes = consec_val_list_split(whole_index_list)
-org_indexes.sort(key=len, reverse=True)
-
-print(org_indexes)
-# for sub in org_indexes:
-#    distances = check_dist(sub, whole_index_list)
-#    amount = check_total_day_count(distances, sub, org_indexes)
