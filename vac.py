@@ -16,33 +16,23 @@ class Vacation:
         self.check_total_day_count(consec_val_list_split(whole_list))
 
     def check_dist(self, whole_list: list[int]):
-        firs_ind = (whole_list.index(self.indexes[0]))
-        try:
-            if len(self.indexes) > 1:
-                last_ind = whole_list.index(self.indexes[-1])
-                # calculate distance to next and previous one in whole list
-                t2prev = abs(whole_list[abs(firs_ind - 1) % len(whole_list)] - self.indexes[0]) - 1
-                t2next = abs(self.indexes[-1] - whole_list[last_ind + 1]) - 1
-            else:
-                # dumb but it will crash without that assignment
-                last_ind = firs_ind
-                t2prev = abs(whole_list[firs_ind - 1] - self.indexes[0]) - 1
-                t2next = abs(self.indexes[0] - whole_list[firs_ind + 1]) - 1
-        # catches error when there is no next thing on list
-        except IndexError:
-            # returns index of nearest previous free day and distance
-            self.dist2prev = t2prev
-            self.prev_ind = whole_list[firs_ind]
+        # check length
+        first_ind = (whole_list.index(self.indexes[0]))
+        if len(self.indexes) > 1:
+            last_ind = whole_list.index(self.indexes[-1])
         else:
-            # returns index of previous free day and distance then distance to next and index of next free day
-            self.dist2prev = t2prev
-            self.prev_ind = whole_list[firs_ind]
-            self.dist2next = t2next
-            self.next_ind = whole_list[last_ind]
+            last_ind = first_ind
+        # check position
+        if first_ind != 0:
+            self.prev_ind = whole_list[first_ind - 1]
+            self.dist2prev = abs(self.prev_ind - self.indexes[0]) - 1
+        if last_ind != (len(whole_list) - 1):
+            self.next_ind = whole_list[last_ind + 1]
+            self.dist2next = abs(self.indexes[-1] - self.next_ind) - 1
 
     def check_total_day_count(self, consecutive_indexes_list):
-        sum_w_prev = self.days + len(is_in_sublist(self.prev_ind, consecutive_indexes_list)) + self.dist2prev
         if self.prev_ind is not None:
+            sum_w_prev = self.days + len(is_in_sublist(self.prev_ind, consecutive_indexes_list)) + self.dist2prev
             self.efficiency1 = self.dist2prev / sum_w_prev
         if self.next_ind is not None:
             sum_w_next = self.days + len(is_in_sublist(self.next_ind, consecutive_indexes_list)) + self.dist2next
