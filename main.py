@@ -1,27 +1,11 @@
 import datetime as dt
 import calendar
-import pandas as pd
-import functions as mh
+from functions import *
+from vac import *
+import itertools
 
 MONTHS = [calendar.month_name[i] for i in range(1, 13)]
-
-
-def create_date_table(start='2000-01-01', end='2050-12-31'):
-    start_ts = pd.to_datetime(start).date()
-    end_ts = pd.to_datetime(end).date()
-    # record timestamp is empty for now
-    dates = pd.DataFrame(columns=['Workday'],
-                         index=pd.date_range(start_ts, end_ts))
-    dates.index.name = 'Date'
-    days_names = {
-        i: name
-        for i, name in enumerate(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])
-    }
-    dates['Day'] = dates.index.dayofweek.map(days_names.get)
-    dates['Month'] = dates.index.month
-    dates.reset_index(inplace=True)
-    dates.index.name = 'date_id'
-    return dates
+CAPACITY = 20
 
 
 if __name__ == "__main__":
@@ -35,20 +19,50 @@ if __name__ == "__main__":
     # set free days on weekends
     for i in calendar.index:
         if calendar['Day'][i] == "Sunday" or calendar['Day'][i] == 'Saturday':
-            calendar.at[i, 'Workday'] = 1
-        else:
             calendar.at[i, 'Workday'] = 0
+        else:
+            calendar.at[i, 'Workday'] = 1
 
     # set work-free days on holidays
     holidays = [f"{year}-01-01", f"{year}-01-06", f"{year}-05-01", f"{year}-05-03", f"{year}-08-15",
                 f"{year}-11-1", f"{year}-11-11", f"{year}-12-25", f"{year}-12-26"]
+    easter, corpus = calculate_easter(year)
     holidays_dt = [pd.to_datetime(w, yearfirst=True) for w in holidays]
-    # add movable holidays i.e. easter
-    holidays_dt.extend(mh.calculate_easter(int(year)))
-    # set them to free too.
+    holidays_dt.extend(calculate_easter(int(year)))
 
     for date in holidays_dt:
         if date in calendar['Date'].values:
             # grabbing index returns index datatype, getting its value returns a list, need to get first item of it.
             a = calendar.index[calendar['Date'] == date].values[0]
             calendar.at[a, 'Workday'] = 0
+
+    # get workdays to list
+    lsit = calendar['Workday'].to_list()
+    # prepare and organize the workdays list
+    whole_index_list = indexes_of_val(lsit)
+    org_indexes = consec_val_list_split(whole_index_list)
+    # generate Vac objects array
+    object_list = []
+    for i, it in enumerate(org_indexes):
+        object_list.append(Vacation(nums=it, whole_list=whole_index_list, idx=i))
+    # remove last object that has no next free day
+    for j in object_list:
+        if j.next_ind is None:
+            object_list.remove(j)
+    # solve branch bound LC method
+    solutions = solve(object_list, CAPACITY)
+    # input indexes of free days
+    day_indexes = []
+    for a in solutions:
+        day_indexes.append(a.indexes)
+        day_indexes.append([i for i in range(a.indexes[-1] + 1, a.next_ind)])
+        day_indexes.append(is_in_sublist(a.next_ind, org_indexes))
+    day_indexes = list(set(list(itertools.chain.from_iterable(day_indexes))))
+    print(f"Total length of free days is {len(day_indexes)}")
+
+    # test if it works
+
+    organized_solutions = consec_val_list_split(day_indexes)
+    print(organized_solutions)
+    for o in organized_solutions:
+        print(f"Vacations from {calendar.at[o[0], 'Date']} to {calendar.at[o[-1], 'Date']}")
