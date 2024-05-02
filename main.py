@@ -66,3 +66,4 @@ if __name__ == "__main__":
     print(organized_solutions)
     for o in organized_solutions:
         print(f"Vacations from {calendar.at[o[0], 'Date']} to {calendar.at[o[-1], 'Date']}")
+        print(f"Total length {len(o)}")
