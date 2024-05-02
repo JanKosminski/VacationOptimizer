@@ -1,8 +1,8 @@
 import pandas as pd
-
+from vac import *
 
 def calculate_easter(year: int):
-    #  Jean Meeus astronomic algorythm
+    #  Jean Meeus's astronomic algorythm from wikipedia how did he come up with this is beyond me
     a = year % 19
     b = year // 100
     c = year % 100
@@ -21,22 +21,6 @@ def calculate_easter(year: int):
     easter_monday = pd.to_datetime(easter_str, dayfirst=True) + pd.DateOffset(days=1)
     corpus_christi = pd.to_datetime(easter_str, dayfirst=True) + pd.DateOffset(days=60)
     return easter_monday, corpus_christi
-
-
-def longest_sequence_indexes(lst: list[int]):
-    max_count = 0
-    current_count = 0
-    start_index = None
-
-    for i, char in enumerate(lst):
-        if char == 0:
-            current_count += 1
-            if current_count > max_count:
-                max_count = current_count
-                start_index = i - max_count + 1
-        else:
-            current_count = 0
-    return list(range(start_index, start_index + max_count))
 
 
 # splits list of ints based on their values groups consecutive series into sub-lists
@@ -71,3 +55,125 @@ def is_in_sublist(char: int, checked_list: list[list[int]]) -> list:
     for i, sublist in enumerate(checked_list):
         if char in sublist:
             return sublist
+
+
+def assign(a, ub, lb, level, flag, tv, tw):
+    # Helper function to assign values to a Node object
+    a.ub = ub
+    a.lb = lb
+    a.level = level
+    a.flag = flag
+    a.tv = tv
+    a.tw = tw
+
+
+def upper_bound(tv, tw, idx, arr, capacity):
+    # Calculate the upper bound of the current node
+    value, weight = tv, tw
+    for i in range(idx, len(arr)):
+        if weight + arr[i].dist2next <= capacity:
+            weight += arr[i].dist2next
+            value -= arr[i].value
+        else:
+            value -= ((capacity - weight) / arr[i].dist2next) * arr[i].value
+            break
+    return value
+
+
+def lower_bound(tv, tw, idx, arr, capacity):
+    # Calculate the lower bound of the current node
+    value, weight = tv, tw
+    for i in range(idx, len(arr)):
+        if weight + arr[i].dist2next <= capacity:
+            weight += arr[i].dist2next
+            value -= arr[i].value
+        else:
+            break
+    return value
+
+
+def solve(arr, capacity):
+    arr.sort(key=lambda x: x.value / x.dist2next, reverse=True)
+
+    current = Node()
+    current.tv = current.tw = current.ub = current.lb = 0
+    current.level = 0
+    current.flag = False
+
+    min_lb = 0
+    final_lb = float('inf')
+
+    curr_path = [False] * len(arr)
+    final_path = [False] * len(arr)
+
+    pq = list()
+    pq.append(current)
+
+    while pq:
+        current = pq.pop(0)
+
+        if current.ub > min_lb or current.ub >= final_lb:
+            continue
+
+        if current.level != 0:
+            curr_path[current.level - 1] = current.flag
+
+        if current.level == len(arr):
+            if current.lb < final_lb:
+                for i in range(len(arr)):
+                    final_path[arr[i].idx] = curr_path[i]
+                final_lb = current.lb
+            continue
+
+        level = current.level
+
+        right = Node()
+        right.ub = upper_bound(current.tv, current.tw, level + 1, arr, capacity)
+        right.lb = lower_bound(current.tv, current.tw, level + 1, arr, capacity)
+        assign(right, right.ub, right.lb, level + 1, False, current.tv, current.tw)
+
+        left = Node()
+        if current.tw + arr[current.level].dist2next <= capacity and not arr[current.level].selected:
+            left.ub = upper_bound(
+                current.tv - arr[level].value,
+                current.tw + arr[level].dist2next,
+                level + 1,
+                arr,
+                capacity
+            )
+            left.lb = lower_bound(
+                current.tv - arr[level].value,
+                current.tw + arr[level].dist2next,
+                level + 1,
+                arr,
+                capacity
+            )
+            assign(
+                left,
+                left.ub,
+                left.lb,
+                level + 1,
+                True,
+                current.tv - arr[level].value,
+                current.tw + arr[level].dist2next
+            )
+
+            # Mark the object as selected
+            arr[current.level].selected = True
+
+        else:
+            left.ub = 1
+            left.lb = 1
+
+        min_lb = min(min_lb, left.lb)
+
+        if min_lb >= left.ub:
+            pq.append(left)
+        if min_lb >= right.ub:
+            pq.append(right)
+    max_profit = -final_lb
+    selected_objects = []
+    for i in range(len(arr)):
+        if final_path[i]:
+            selected_objects.append(arr[i])
+    return selected_objects
