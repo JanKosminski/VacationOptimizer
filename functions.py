@@ -227,6 +227,7 @@ def print_solution(solutions, calendar, org_indexes):
         day_indexes.append([i for i in range(a.indexes[-1] + 1, a.next_ind)])
         day_indexes.append(is_in_sublist(a.next_ind, org_indexes))
     day_indexes = list(set(list(itertools.chain.from_iterable(day_indexes))))
+    day_indexes.sort(reverse=False)
     # Printed output
     out = f"Total amount of free days is {len(day_indexes)}"
     print(out)
