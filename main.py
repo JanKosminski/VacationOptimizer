@@ -58,10 +58,11 @@ if __name__ == "__main__":
         day_indexes.append([i for i in range(a.indexes[-1] + 1, a.next_ind)])
         day_indexes.append(is_in_sublist(a.next_ind, org_indexes))
     day_indexes = list(set(list(itertools.chain.from_iterable(day_indexes))))
+
     print(f"Total length of free days is {len(day_indexes)}")
 
     # test if it works
-
+    day_indexes.sort(reverse=False)
     organized_solutions = consec_val_list_split(day_indexes)
     print(organized_solutions)
     for o in organized_solutions:
