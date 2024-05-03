@@ -27,7 +27,7 @@ def gui(function, **args):
     days_input.insert(0, "20")
     # Run the code
     run_button = tk.Button(text="Run", bg=WHITE, command=lambda: callback(function, **args),
-                           width=10) # more illegal code
+                           width=10)
     run_button.grid(column=1, row=1, sticky="e")
     # output label
     output = tk.Label(text="", bg=WHITE, justify="left")
