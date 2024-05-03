@@ -1,7 +1,5 @@
 import datetime as dt
 import calendar
-from functions import *
-from vac import *
 from gui_module import *
 
 MONTHS = [calendar.month_name[i] for i in range(1, 13)]
@@ -28,7 +26,8 @@ if __name__ == "__main__":
     for j in object_list:
         if j.next_ind is None:
             object_list.remove(j)
-    # solve branch bound LC method
-    gui(solve, object_list)
-    # print out solutions
-    print_solution(solutions, calendar, org_indexes)
+    # feed functions to gui module
+    kwargs = {"arr": object_list, "calendar": calendar, "org_indexes": org_indexes}
+    gui(solve, **kwargs)
+
+

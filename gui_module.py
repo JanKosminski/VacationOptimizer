@@ -1,23 +1,22 @@
 import tkinter as tk
 from functions import *
+
 WHITE = "#ffffff"
-PINK = "#e2979c"
-RED = "#e7305b"
-GREEN = "#9bdeac"
-YELLOW = "#f7f5dd"
 FONT_NAME = "Courier"
 
 
-def gui(function, **kwargs):
+def gui(function, **args):
 
-    def on_push(funct):
-        days_input.get()
-        solution = funct(*kwargs, int(days_input.get()))
-        print_solution(*kwargs)
+    def callback(funct, **c_args):
+        # that's illegal but who cares
+        a = funct(c_args["arr"], capacity=int(days_input.get()))
+        b = print_solution(a, c_args['calendar'], c_args['org_indexes'])
+        output.config(text=b)
 
     # innit window
     window = tk.Tk()
     window.title("Vacation Optimizer")
+
     window.config(padx=20, pady=20, bg=WHITE)
 
     # Input the available vacation days
@@ -26,15 +25,13 @@ def gui(function, **kwargs):
     desc.grid(column=0, row=0, sticky="w", columnspan=2)
     days_input.grid(column=0, row=1, sticky="w")
     days_input.insert(0, "20")
-
     # Run the code
-    run_button = tk.Button(text="Run", bg=WHITE, command=lambda: on_push(function, *kwargs),
-                           width=10)
+    run_button = tk.Button(text="Run", bg=WHITE, command=lambda: callback(function, **args),
+                           width=10) # more illegal code
     run_button.grid(column=1, row=1, sticky="e")
     # output label
-    output = tk.Label(text="", bg=WHITE)
+    output = tk.Label(text="", bg=WHITE, justify="left")
     output.grid(column=0, row=2, sticky="w")
 
     window.mainloop()
-
 
