@@ -29,6 +29,6 @@ if __name__ == "__main__":
         if j.next_ind is None:
             object_list.remove(j)
     # solve branch bound LC method
-    solutions = gui(solve, object_list)
+    gui(solve, object_list)
     # print out solutions
     print_solution(solutions, calendar, org_indexes)

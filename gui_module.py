@@ -1,5 +1,5 @@
 import tkinter as tk
-
+from functions import *
 WHITE = "#ffffff"
 PINK = "#e2979c"
 RED = "#e7305b"
@@ -8,7 +8,13 @@ YELLOW = "#f7f5dd"
 FONT_NAME = "Courier"
 
 
-def gui(function, *kwargs):
+def gui(function, **kwargs):
+
+    def on_push(funct):
+        days_input.get()
+        solution = funct(*kwargs, int(days_input.get()))
+        print_solution(*kwargs)
+
     # innit window
     window = tk.Tk()
     window.title("Vacation Optimizer")
@@ -22,11 +28,13 @@ def gui(function, *kwargs):
     days_input.insert(0, "20")
 
     # Run the code
-    run_button = tk.Button(text="Run", bg=WHITE, command=lambda: function(*kwargs, capacity=int(days_input.get())),
+    run_button = tk.Button(text="Run", bg=WHITE, command=lambda: on_push(function, *kwargs),
                            width=10)
     run_button.grid(column=1, row=1, sticky="e")
-    # output lablel
+    # output label
     output = tk.Label(text="", bg=WHITE)
     output.grid(column=0, row=2, sticky="w")
 
     window.mainloop()
+
+
