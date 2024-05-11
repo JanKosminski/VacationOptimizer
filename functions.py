@@ -196,3 +196,42 @@ def create_date_table(start='2000-01-01', end='2050-12-31'):
     dates.reset_index(inplace=True)
     dates.index.name = 'date_id'
     return dates
+
+
+def set_calendar_holidays(calendar, holidays_static, year):
+    # set free days on weekends
+    for i in calendar.index:
+        if calendar['Day'][i] == "Sunday" or calendar['Day'][i] == 'Saturday':
+            calendar.at[i, 'Workday'] = 0
+        else:
+            calendar.at[i, 'Workday'] = 1
+    easter, corpus = calculate_easter(year)
+    holidays_dt = [pd.to_datetime(w, yearfirst=True) for w in holidays_static]
+    holidays_dt.extend(calculate_easter(int(year)))
+
+    for date in holidays_dt:
+        if date in calendar['Date'].values:
+            # grabbing index returns index datatype, getting its value returns a list, need to get first item of it.
+            a = calendar.index[calendar['Date'] == date].values[0]
+            calendar.at[a, 'Workday'] = 0
+
+
+def innit_holidays(calendar, year):
+    # set free days on weekends
+    for i in calendar.index:
+        if calendar['Day'][i] == "Sunday" or calendar['Day'][i] == 'Saturday':
+            calendar.at[i, 'Workday'] = 0
+        else:
+            calendar.at[i, 'Workday'] = 1
+
+    # set work-free days on holidays
+    holidays = [f"{year}-01-01", f"{year}-01-06", f"{year}-05-01", f"{year}-05-03", f"{year}-08-15",
+                f"{year}-11-1", f"{year}-11-11", f"{year}-12-25", f"{year}-12-26"]
+    holidays_dt = [pd.to_datetime(w, yearfirst=True) for w in holidays]
+    holidays_dt.extend(calculate_easter(int(year)))
+
+    for date in holidays_dt:
+        if date in calendar['Date'].values:
+            # grabbing index returns index datatype, getting its value returns a list, need to get first item of it.
+            a = calendar.index[calendar['Date'] == date].values[0]
+            calendar.at[a, 'Workday'] = 0
