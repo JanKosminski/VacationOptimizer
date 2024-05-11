@@ -2,9 +2,10 @@ import datetime as dt
 import calendar
 import functions as fc
 from vac import *
-import itertools
+
 
 MONTHS = [calendar.month_name[i] for i in range(1, 13)]
+# Capacity aka amount of paid leave days to use
 CAPACITY = 20
 
 
@@ -35,20 +36,5 @@ if __name__ == "__main__":
     object_list = clean_object_list(org_indexes)
     # solve branch bound LC method
     solutions = fc.solve(object_list, CAPACITY)
-    # input indexes of free days
-    day_indexes = []
-    for a in solutions:
-        day_indexes.append(a.indexes)
-        day_indexes.append([i for i in range(a.indexes[-1] + 1, a.next_ind)])
-        day_indexes.append(fc.is_in_sublist(a.next_ind, org_indexes))
-    day_indexes = list(set(list(itertools.chain.from_iterable(day_indexes))))
+    fc.print_out_solutions(solutions, org_indexes, calendar)
 
-    print(f"Total length of free days is {len(day_indexes)}")
-
-    # test if it works
-    day_indexes.sort(reverse=False)
-    organized_solutions = fc.consec_val_list_split(day_indexes)
-    print(organized_solutions)
-    for o in organized_solutions:
-        print(f"Vacations from {calendar.at[o[0], 'Date']} to {calendar.at[o[-1], 'Date']}")
-        print(f"Total length {len(o)}")

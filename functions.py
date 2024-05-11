@@ -1,6 +1,6 @@
 import pandas as pd
 from vac import *
-
+import itertools
 
 def calculate_easter(year: int):
     #  Jean Meeus's astronomic algorythm from wikipedia how did he come up with this is beyond me
@@ -198,24 +198,6 @@ def create_date_table(start='2000-01-01', end='2050-12-31'):
     return dates
 
 
-def set_calendar_holidays(calendar, holidays_static, year):
-    # set free days on weekends
-    for i in calendar.index:
-        if calendar['Day'][i] == "Sunday" or calendar['Day'][i] == 'Saturday':
-            calendar.at[i, 'Workday'] = 0
-        else:
-            calendar.at[i, 'Workday'] = 1
-    easter, corpus = calculate_easter(year)
-    holidays_dt = [pd.to_datetime(w, yearfirst=True) for w in holidays_static]
-    holidays_dt.extend(calculate_easter(int(year)))
-
-    for date in holidays_dt:
-        if date in calendar['Date'].values:
-            # grabbing index returns index datatype, getting its value returns a list, need to get first item of it.
-            a = calendar.index[calendar['Date'] == date].values[0]
-            calendar.at[a, 'Workday'] = 0
-
-
 def innit_holidays(calendar, year):
     # set free days on weekends
     for i in calendar.index:
@@ -235,3 +217,22 @@ def innit_holidays(calendar, year):
             # grabbing index returns index datatype, getting its value returns a list, need to get first item of it.
             a = calendar.index[calendar['Date'] == date].values[0]
             calendar.at[a, 'Workday'] = 0
+
+
+def print_out_solutions(solution, org_indexes, calendar):
+    day_indexes = []
+    for a in solution:
+        day_indexes.append(a.indexes)
+        day_indexes.append([i for i in range(a.indexes[-1] + 1, a.next_ind)])
+        day_indexes.append(is_in_sublist(a.next_ind, org_indexes))
+    day_indexes = list(set(list(itertools.chain.from_iterable(day_indexes))))
+
+    print(f"Total length of free days is {len(day_indexes)}")
+
+    # test if it works
+    day_indexes.sort(reverse=False)
+    organized_solutions = fc.consec_val_list_split(day_indexes)
+    print(organized_solutions)
+    for o in organized_solutions:
+        print(f"Vacations from {calendar.at[o[0], 'Date']} to {calendar.at[o[-1], 'Date']}")
+        print(f"Total length {len(o)}")
