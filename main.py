@@ -33,8 +33,7 @@ if __name__ == "__main__":
     whole_index_list = fc.indexes_of_val(lsit)
     org_indexes = fc.consec_val_list_split(whole_index_list)
     # generate Vac objects array
-    object_list = clean_object_list(org_indexes)
+    objects = clean_object_list(org_indexes)
     # solve branch bound LC method
-    solutions = fc.solve(object_list, CAPACITY)
+    solutions = fc.solve(objects, CAPACITY)
     fc.print_out_solutions(solutions, org_indexes, calendar)
-
