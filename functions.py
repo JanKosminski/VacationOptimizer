@@ -2,6 +2,7 @@ import pandas as pd
 from vac import *
 import itertools
 
+
 def calculate_easter(year: int):
     #  Jean Meeus's astronomic algorythm from wikipedia how did he come up with this is beyond me
     a = year % 19
@@ -231,7 +232,7 @@ def print_out_solutions(solution, org_indexes, calendar):
 
     # test if it works
     day_indexes.sort(reverse=False)
-    organized_solutions = fc.consec_val_list_split(day_indexes)
+    organized_solutions = consec_val_list_split(day_indexes)
     print(organized_solutions)
     for o in organized_solutions:
         print(f"Vacations from {calendar.at[o[0], 'Date']} to {calendar.at[o[-1], 'Date']}")
