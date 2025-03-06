@@ -2,6 +2,7 @@ from functions import *
 from vac import *
 import copy
 import itertools
+from gui_module import *
 CAPACITY = 8
 
 lsit = [1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0]
@@ -38,3 +39,4 @@ for b in organized_solutions:
 
 print(organized_solutions)
 
+gui(solve, object_list)

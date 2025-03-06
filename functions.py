@@ -2,7 +2,6 @@ import pandas as pd
 from vac import *
 import itertools
 
-
 def calculate_easter(year: int):
     #  Jean Meeus's astronomic algorythm from wikipedia how did he come up with this is beyond me
     a = year % 19
@@ -199,7 +198,7 @@ def create_date_table(start='2000-01-01', end='2050-12-31'):
     return dates
 
 
-def innit_holidays(calendar, year):
+def holiday_setup(calendar, year):
     # set free days on weekends
     for i in calendar.index:
         if calendar['Day'][i] == "Sunday" or calendar['Day'][i] == 'Saturday':
@@ -210,6 +209,7 @@ def innit_holidays(calendar, year):
     # set work-free days on holidays
     holidays = [f"{year}-01-01", f"{year}-01-06", f"{year}-05-01", f"{year}-05-03", f"{year}-08-15",
                 f"{year}-11-1", f"{year}-11-11", f"{year}-12-25", f"{year}-12-26"]
+    easter, corpus = calculate_easter(year)
     holidays_dt = [pd.to_datetime(w, yearfirst=True) for w in holidays]
     holidays_dt.extend(calculate_easter(int(year)))
 
@@ -220,20 +220,19 @@ def innit_holidays(calendar, year):
             calendar.at[a, 'Workday'] = 0
 
 
-def print_out_solutions(solution, org_indexes, calendar):
+def print_solution(solutions, calendar, org_indexes):
     day_indexes = []
-    for a in solution:
+    for a in solutions:
         day_indexes.append(a.indexes)
         day_indexes.append([i for i in range(a.indexes[-1] + 1, a.next_ind)])
         day_indexes.append(is_in_sublist(a.next_ind, org_indexes))
     day_indexes = list(set(list(itertools.chain.from_iterable(day_indexes))))
-
-    print(f"Total length of free days is {len(day_indexes)}")
-
-    # test if it works
     day_indexes.sort(reverse=False)
+    # Printed output
+    out = f"Total amount of free days is {len(day_indexes)}"
+    print(out)
     organized_solutions = consec_val_list_split(day_indexes)
-    print(organized_solutions)
     for o in organized_solutions:
-        print(f"Vacations from {calendar.at[o[0], 'Date']} to {calendar.at[o[-1], 'Date']}")
-        print(f"Total length {len(o)}")
+        out += f"\nVacations from {calendar.at[o[0], 'Date']} to {calendar.at[o[-1], 'Date']}\nTotal length {len(o)}"
+        print(f"Vacations from {calendar.at[o[0], 'Date']} to {calendar.at[o[-1], 'Date']}\nTotal length {len(o)}")
+    return out

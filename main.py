@@ -1,23 +1,9 @@
 import datetime as dt
 import calendar
-import functions as fc
-from vac import *
-
+from gui_module import *
 
 MONTHS = [calendar.month_name[i] for i in range(1, 13)]
-# Capacity aka amount of paid leave days to use
 CAPACITY = 20
-
-
-def clean_object_list(org_list):
-    object_list = []
-    for i, it in enumerate(org_list):
-        object_list.append(Vacation(nums=it, whole_list=whole_index_list, idx=i))
-    # remove last object that has no next free day
-    for j in object_list:
-        if j.next_ind is None:
-            object_list.remove(j)
-    return object_list
 
 
 if __name__ == "__main__":
@@ -25,15 +11,23 @@ if __name__ == "__main__":
     today = dt.datetime.now()
     year = today.year
     # set calendar df
-    calendar = fc.create_date_table(start=f"{today.year}-{today.month}-{today.day}", end=f"{today.year}-12-31")
-    fc.innit_holidays(calendar, year)
+    calendar = create_date_table(start=f"{today.year}-{today.month}-{today.day}", end=f"{today.year}-12-31")
+    holiday_setup(calendar, year)
     # get workdays to list
     lsit = calendar['Workday'].to_list()
     # prepare and organize the workdays list
-    whole_index_list = fc.indexes_of_val(lsit)
-    org_indexes = fc.consec_val_list_split(whole_index_list)
+    whole_index_list = indexes_of_val(lsit)
+    org_indexes = consec_val_list_split(whole_index_list)
     # generate Vac objects array
-    objects = clean_object_list(org_indexes)
-    # solve branch bound LC method
-    solutions = fc.solve(objects, CAPACITY)
-    fc.print_out_solutions(solutions, org_indexes, calendar)
+    object_list = []
+    for i, it in enumerate(org_indexes):
+        object_list.append(Vacation(nums=it, whole_list=whole_index_list, idx=i))
+    # remove last object that has no next free day (most likely last one)
+    for j in object_list:
+        if j.next_ind is None:
+            object_list.remove(j)
+    # feed functions to gui module
+    kwargs = {"arr": object_list, "calendar": calendar, "org_indexes": org_indexes}
+    gui(solve, **kwargs)
+
+
