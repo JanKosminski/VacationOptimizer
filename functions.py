@@ -160,7 +160,7 @@ def solve(arr, capacity):
             )
 
             # Mark the object as selected
-            arr[current.level].selected = True
+            #arr[current.level].selected = True
 
         else:
             left.ub = 1
@@ -233,6 +233,7 @@ def print_solution(solutions, calendar, org_indexes):
     print(out)
     organized_solutions = consec_val_list_split(day_indexes)
     for o in organized_solutions:
-        out += f"\nVacations from {calendar.at[o[0], 'Date']} to {calendar.at[o[-1], 'Date']}\nTotal length {len(o)}"
-        print(f"Vacations from {calendar.at[o[0], 'Date']} to {calendar.at[o[-1], 'Date']}\nTotal length {len(o)}")
+        out += f"\nVacations from {calendar.at[o[0], 'Date'].date()} to {calendar.at[o[-1], 'Date'].date()}\nTotal length {len(o)}"
+        print(
+            f"Vacations from {calendar.at[o[0], 'Date'].date()} to {calendar.at[o[-1], 'Date'].date()}\nTotal length {len(o)}")
     return out

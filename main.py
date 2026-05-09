@@ -3,7 +3,7 @@ import calendar
 from gui_module import *
 
 MONTHS = [calendar.month_name[i] for i in range(1, 13)]
-CAPACITY = 20
+CAPACITY = 27
 
 
 if __name__ == "__main__":
@@ -18,6 +18,7 @@ if __name__ == "__main__":
     # prepare and organize the workdays list
     whole_index_list = indexes_of_val(lsit)
     org_indexes = consec_val_list_split(whole_index_list)
+    print(org_indexes)
     # generate Vac objects array
     object_list = []
     for i, it in enumerate(org_indexes):
